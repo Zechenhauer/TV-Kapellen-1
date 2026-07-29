@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saisonübersicht 3. Mannschaft — TV Kapellen 1919 e.V.</title>
+    <title>Saisonübersicht 4. Mannschaft — TV Kapellen 1919 e.V.</title>
     <style>
     * { box-sizing: border-box; }
     body {
@@ -205,20 +205,21 @@
     <div class="container">
         <!-- Hauptüberschrift -->
         <div class="app-main-header">
-            <h1>TV Kapellen 1919 e.V. 3</h1>
+            <!-- TITEL ANGEPASST AUF 4. MANNSCHAFT -->
+            <h1>TV Kapellen 1919 e.V. 4</h1>
             <div class="app-subtitle">Saisonübersicht & Spieler-Statistiken</div>
         </div>
 
         <!-- Zurück Button -->
         <div class="back-nav">
-            <a href="https://zechenhauer.github.io/TVK-3-Saison-26-27/" class="back-btn">
+            <a href="https://zechenhauer.github.io/TVK-4-Saison-26-27/" class="back-btn">
                 <span>🔙</span> Zurück zur Hauptapp
             </a>
         </div>
 
         <!-- Live Suche -->
         <div class="search-wrapper">
-            <input type="text" id="playerSearchInput" class="search-box-input" placeholder="🔍 Nach Spieler-Name suchen (z.B. Lenz)..." oninput="performLiveSearch()">
+            <input type="text" id="playerSearchInput" class="search-box-input" placeholder="🔍 Nach Spieler-Name suchen..." oninput="performLiveSearch()">
         </div>
 
         <div id="loadingMessage" style="text-align:center; color:#f59e0b; margin: 20px 0;">Lade Daten aus Google Sheets...</div>
@@ -286,8 +287,10 @@
     </div>
 
     <script>
-    const SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdTOUA5sqMlTVxxUZWLn-ce3HNDvCbLfmLZIgT7EKJ0tYAT3OqZhx3T_BMvpgIwU5tDUxmjvUIRbHz/pubhtml?gid=2097702849&single=true";
+    // 1. KORRIGIERTE GOOGLE SHEETS URL (Mit &output=csv am Ende!)
+    const SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdTOUA5sqMlTVxxUZWLn-ce3HNDvCbLfmLZIgT7EKJ0tYAT3OqZhx3T_BMvpgIwU5tDUxmjvUIRbHz/pub?gid=2097702849&single=true&output=csv";
 
+    // 2. KADER DER MANNSCHAFT (Bitte hier die Namen der 4. Mannschaft anpassen, falls sie abweichen!)
     const teamKader = [
         "Jürgen Schützendorf", "Ludger Schledorn", "Markus Lenz", 
         "Niklas Weichert", "Andreas Denner", "Markus Ginsel", 
@@ -300,12 +303,22 @@
         try {
             const response = await fetch(SHEETS_CSV_URL);
             const dataText = await response.text();
+            
+            // Falls versehentlich doch HTML geladen wird, bricht er ab statt das Layout zu crashen
+            if(dataText.toLowerCase().includes("<!doctype html>") || dataText.includes("<html")) {
+                document.getElementById("loadingMessage").innerHTML = "⚠️ Fehler: Die URL gibt immer noch eine Website zurück, keine reine CSV-Datei. Bitte Link prüfen.";
+                return;
+            }
+
             const rows = parseCSV(dataText);
-            if(rows.length <= 1) return;
+            if(rows.length <= 1) {
+                document.getElementById("loadingMessage").innerHTML = "⚠️ Tabelle ist leer oder konnte nicht gelesen werden.";
+                return;
+            }
             processDartsData(rows);
         } catch (error) {
             console.error(error);
-            document.getElementById("loadingMessage").innerHTML = "⚠️ Fehler beim Laden der Daten.";
+            document.getElementById("loadingMessage").innerHTML = "⚠️ Fehler beim Laden der Daten. Bitte Internetverbindung prüfen.";
         }
     }
 
@@ -571,7 +584,8 @@
                     <div class="card-header">
                         <div class="spieltag-label">SPIELTAG ${st.nummer} ${st.datum ? '&bull; ' + st.datum : ''}</div>
                         <div class="matchday-title-box">
-                            <span class="team-badge ${kapellenClass}">TV Kapellen 3</span>
+                            <!-- BADGE FÜR 4. MANNSCHAFT -->
+                            <span class="team-badge ${kapellenClass}">TV Kapellen 4</span>
                             <span class="matchday-score">${scoreDisplay}</span>
                             <span class="team-badge ${gegnerClass}">${st.gegnerTeam}</span>
                         </div>
