@@ -21,6 +21,27 @@
         margin-bottom: 20px;
         position: relative;
     }
+    
+    /* Richtet Logo links, Überschrift & Logo rechts nebeneinander aus */
+    .header-title-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 4px;
+        width: 100%;
+    }
+
+    /* Erzwingt kompakte Größe für die Wappen/Logos */
+    .header-logo {
+        height: 45px;
+        max-height: 45px;
+        width: auto;
+        max-width: 50px;
+        object-fit: contain;
+        flex-shrink: 0;
+    }
+
     .app-main-header h1 {
         color: #f59e0b;
         font-size: 26px;
@@ -262,20 +283,20 @@
 </head>
 <body>
     <div class="container">
-    <!-- Hauptüberschrift mit Aktualisieren-Button & Logos -->
-    <div class="app-main-header">
-        <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">🔄 Daten aktualisieren</button>
-        
-        <!-- Zeile für Logo links, Titel und Logo rechts nebeneinander -->
-        <div class="header-title-row">
-            <img src="https://lh3.googleusercontent.com/d/1PB4X2QrrMlaRlajQEWDtJxRP2c6VTsI5" alt="TV Kapellen Logo" class="header-logo">
-            <h1>TV Kapellen 1919 e.V. 1</h1>
-            <img src="https://lh3.googleusercontent.com/d/1PB4X2QrrMlaRlajQEWDtJxRP2c6VTsI5" alt="TV Kapellen Logo" class="header-logo">
-        </div>
+        <!-- Hauptüberschrift mit Aktualisieren-Button & Logos -->
+        <div class="app-main-header">
+            <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">🔄 Daten aktualisieren</button>
+            
+            <!-- Zeile für Logo links, Titel und Logo rechts nebeneinander -->
+            <div class="header-title-row">
+                <img src="https://lh3.googleusercontent.com/d/1PB4X2QrrMlaRlajQEWDtJxRP2c6VTsI5" alt="TV Kapellen Logo" class="header-logo">
+                <h1>TV Kapellen 1919 e.V. 1</h1>
+                <img src="https://lh3.googleusercontent.com/d/1PB4X2QrrMlaRlajQEWDtJxRP2c6VTsI5" alt="TV Kapellen Logo" class="header-logo">
+            </div>
 
-        <div class="app-subtitle">Saisonübersicht & Spieler-Statistiken</div>
-        <div class="app-sync-info">⚡ Datenpflege & Bereitstellung: Jürgen Schützendorf</div>
-    </div>
+            <div class="app-subtitle">Saisonübersicht & Spieler-Statistiken</div>
+            <div class="app-sync-info">⚡ Datenpflege & Bereitstellung: Jürgen Schützendorf</div>
+        </div>
         
         <!-- Live Suche -->
         <div class="search-wrapper">
