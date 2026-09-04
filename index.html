@@ -267,6 +267,7 @@
 </head>
 <body>
     <div class="container">
+        <!-- Hauptüberschrift mit Aktualisieren-Button & Logos -->
         <div class="app-main-header">
             <button class="refresh-btn" id="refreshBtn" onclick="refreshData()">🔄 Daten aktualisieren</button>
             
@@ -280,13 +281,16 @@
             <div class="app-sync-info">⚡ Datenpflege & Bereitstellung: Jürgen Schützendorf</div>
         </div>
 
+        <!-- Live Suche -->
         <div class="search-wrapper">
             <input type="text" id="playerSearchInput" class="search-box-input" placeholder="🔍 Nach Spieler-Name suchen..." oninput="performLiveSearch()">
         </div>
 
         <div id="loadingMessage" style="text-align:center; color:#f59e0b; margin: 20px 0;">Lade Daten aus Google Sheets...</div>
 
+        <!-- Dashboard Grid (Side-by-Side Kacheln) -->
         <div class="dashboard-grid" id="statsGrid" style="display:none;">
+            <!-- Highlights & Bilanz Kachel -->
             <div class="premium-card">
                 <div class="card-header-title">
                     <h2>🏆 HIGHLIGHTS & BILANZ</h2>
@@ -308,6 +312,7 @@
                 </table>
             </div>
 
+            <!-- Scoring Kachel -->
             <div class="premium-card">
                 <div class="card-header-title">
                     <h2>🎯 SCORING-STATS</h2>
@@ -329,23 +334,26 @@
             </div>
         </div>
 
+        <!-- Schnellnavigation -->
         <div class="nav-links" id="navLinks" style="display:none;"></div>
 
+        <!-- Spieltage -->
         <div id="spieltageContainer"></div>
     </div>
 
+    <!-- Modal Pop-Up -->
     <div class="modal-overlay" id="matchModal">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title" id="modalTitle">Match Details</div>
-                <button class="close-btn" onclick="closeModal()">×</button>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             <div id="modalBody"></div>
         </div>
     </div>
 
     <script>
-    const SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdTOUA5sqMlTVxxUZWLn-ce3HNDvCbLfmLZIgT7EKJ0tYAT3OqZhx3T_BMvpgIwU5tDUxmjvUIRbHz/pub?gid=2097702849&single=true&output=csv";
+    const SHEETS_CSV_URL = "https://docs.google.com/spreadsheets/d/1vHDgp-TR5TYPBM5qxsA2YHcZynZUwM3gaFOkaHbxINU/export?format=csv&gid=2097702849";
 
     const teamKader = [
         "Dirk Kraus", "Jan Krabbe", "Joel Wielinski", "Denis Vanzidler", 
@@ -700,7 +708,7 @@
             let cardHtml = `
                 <div class="card" id="spieltag-${st.nummer}" data-players="${playersDataAttr}">
                     <div class="card-header">
-                        <div class="spieltag-label">SPIELTAG ${st.nummer} ${st.datum ? '• ' + st.datum : ''}</div>
+                        <div class="spieltag-label">SPIELTAG ${st.nummer} ${st.datum ? '&bull; ' + st.datum : ''}</div>
                         <div class="matchday-title-box">
                             <span class="team-badge ${kapellenClass}">TV Kapellen 1</span>
                             <span class="matchday-score">${scoreDisplay}</span>
@@ -841,4 +849,63 @@
 
             <div class="modal-section-title">Highlights Match</div>
             <div style="font-size:13px; background:#0f172a; padding:10px; border-radius:6px; border: 1px solid #334155;">
-                🎯 <b>180er:</b> ${
+                🎯 <b>180er:</b> ${display180}<br>
+                🔥 <b>High Finish:</b> ${m.hfString || '—'}<br>
+                ⚡ <b>Short Legs (&le;18 Darts):</b> ${m.sgCount}x
+            </div>
+        `;
+
+        document.getElementById("matchModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("matchModal").style.display = "none";
+    }
+
+    function performLiveSearch() {
+        const query = document.getElementById('playerSearchInput').value.toLowerCase().trim();
+        
+        document.querySelectorAll('.hl-player-row').forEach(row => {
+            const name = row.getAttribute('data-player-name') || '';
+            if (query === '') {
+                row.classList.remove('row-faded', 'row-matched');
+            } else if (name.includes(query)) { 
+                row.classList.add('row-matched'); 
+                row.classList.remove('row-faded'); 
+            } else { 
+                row.classList.add('row-faded'); 
+                row.classList.remove('row-matched'); 
+            }
+        });
+
+        document.querySelectorAll('.card').forEach(card => {
+            const cardPlayers = card.getAttribute('data-players') || '';
+            let cardHasMatch = false;
+
+            card.querySelectorAll('.match-row').forEach(row => {
+                const rowPlayers = row.getAttribute('data-row-players') || '';
+                if (query === '') {
+                    row.style.display = 'flex';
+                    row.classList.remove('row-matched');
+                } else if (rowPlayers.includes(query)) {
+                    row.style.display = 'flex';
+                    row.classList.add('row-matched');
+                    cardHasMatch = true;
+                } else {
+                    row.style.display = 'none';
+                    row.classList.remove('row-matched');
+                }
+            });
+
+            if (query === '') {
+                card.style.display = 'block';
+            } else if (cardHasMatch || cardPlayers.includes(query)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    </script>
+</body>
+</html>
