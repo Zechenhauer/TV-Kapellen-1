@@ -316,7 +316,7 @@
             <div class="premium-card">
                 <div class="card-header-title">
                     <h2>🏆 HIGHLIGHTS & BILANZ</h2>
-                    <div class="subtitle">SIEGE, NIEDERLAGEN & BESTLEISTUNGEN</div>
+                    <div class="subtitle">SIEGE, NIEDERLAGEN & BESTLEISTUNGEN (NUR EINZEL)</div>
                 </div>
                 <table class="data-table">
                     <thead>
@@ -338,7 +338,7 @@
             <div class="premium-card">
                 <div class="card-header-title">
                     <h2>🎯 SCORING-STATS</h2>
-                    <div class="subtitle">GESAMTANZAHL ALLER HIGH-SCORES</div>
+                    <div class="subtitle">GESAMTANZAHL ALLER HIGH-SCORES (NUR EINZEL)</div>
                 </div>
                 <table class="data-table">
                     <thead>
@@ -507,6 +507,20 @@
 
             if (!spieltagNum) return;
 
+            // --- DOPPEL-ERKENNUNG DIREKT AM ANFANG ---
+            let isDoppelMatch = blockName.toLowerCase().includes("doppel") || spielerKapellen.includes("/");
+
+            if (!spieltageMap[spieltagNum]) {
+                spieltageMap[spieltagNum] = {
+                    nummer: spieltagNum, datum: datum, gegnerTeam: gegnerTeam,
+                    endergebnis: endergebnis, bloecke: {}, alleSpieler: new Set()
+                };
+            }
+
+            let st = spieltageMap[spieltagNum];
+            if (endergebnis && !st.endergebnis) st.endergebnis = endergebnis;
+            if (!st.bloecke[blockName]) st.bloecke[blockName] = [];
+
             let autoShortLegs = 0;
             let dartLegsArray = [];
             let currentMatchShortLegs = [];
@@ -536,17 +550,6 @@
                 }
             }
 
-            if (!spieltageMap[spieltagNum]) {
-                spieltageMap[spieltagNum] = {
-                    nummer: spieltagNum, datum: datum, gegnerTeam: gegnerTeam,
-                    endergebnis: endergebnis, bloecke: {}, alleSpieler: new Set()
-                };
-            }
-
-            let st = spieltageMap[spieltagNum];
-            if (endergebnis && !st.endergebnis) st.endergebnis = endergebnis;
-            if (!st.bloecke[blockName]) st.bloecke[blockName] = [];
-
             let matchObj = {
                 id: idx,
                 spieler: spielerKapellen, gegner: gegnerName, ergebnis: ergebnisSpiel,
@@ -565,6 +568,22 @@
 
             st.bloecke[blockName].push(matchObj);
 
+            let beteiligteSpieler = spielerKapellen.split("/").map(s => s.trim()).filter(s => s !== "");
+            beteiligteSpieler.forEach(subP => {
+                let matchedKaderName = teamKader.find(tk => tk.toLowerCase() === subP.toLowerCase());
+                if (matchedKaderName) {
+                    st.alleSpieler.add(matchedKaderName.toLowerCase());
+                } else if (subP) {
+                    st.alleSpieler.add(subP.toLowerCase());
+                }
+            });
+
+            // WICHTIG: Wenn es ein Doppel ist, hier für die Kachel-Statistiken abbrechen
+            if (isDoppelMatch) {
+                return;
+            }
+
+            // --- AB HIER NUR REINE EINZEL-BERECHNUNG FÜR DIE KACHELN ---
             let isWin = false;
             let isLoss = false;
             if (ergebnisSpiel && ergebnisSpiel.includes(":")) {
@@ -575,11 +594,7 @@
                 else if (p2 > p1) isLoss = true;
             }
 
-            let beteiligteSpieler = spielerKapellen.split("/").map(s => s.trim()).filter(s => s !== "");
-            
             beteiligteSpieler.forEach(subP => {
-                if(subP) st.alleSpieler.add(subP.toLowerCase());
-                
                 let matchedKaderName = teamKader.find(tk => tk.toLowerCase() === subP.toLowerCase());
                 if (matchedKaderName) {
                     if (isWin) spielerStats[matchedKaderName].siege++;
@@ -787,7 +802,7 @@
                 });
             });
 
-            // Festes Mannschaftsfoto für Spieltag 1 (ohne Upload-Button)
+            // Festes Mannschaftsfoto für Spieltag 1
             if (st.nummer == "1") {
                 cardHtml += `
                     <div class="matchday-photo-section">
@@ -836,6 +851,35 @@
             }
         }
 
+        let scoringSection = "";
+        if (!isDoppel) {
+            scoringSection = `
+                <div class="modal-section-title">Scoring</div>
+                <table class="modal-table">
+                    <thead>
+                        <tr class="scoring-header-row">
+                            <th style="text-align:left; width: 35%;"></th>
+                            <th>60+</th>
+                            <th>80+</th>
+                            <th>100+</th>
+                            <th>140+</th>
+                            <th>180</th>
+                        </tr>
+                    </thead>
+                    <tbody class="scoring-table-body">
+                        <tr>
+                            <td class="p-name">${m.spieler}</td>
+                            <td>${m.scoring ? m.scoring.s60 : '0'}</td>
+                            <td>${m.scoring ? m.scoring.s80 : '0'}</td>
+                            <td>${m.scoring ? m.scoring.s100 : '0'}</td>
+                            <td>${m.scoring ? m.scoring.s140 : '0'}</td>
+                            <td>${m.scoring ? m.scoring.s180 : '0'}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        }
+
         document.getElementById("modalBody").innerHTML = `
             <div style="text-align:center; font-size: 20px; font-weight:bold; margin-bottom: 15px; color:#f59e0b;">
                 Ergebnis: ${m.ergebnis}
@@ -843,7 +887,7 @@
             
             <div class="modal-section-title">Averages</div>
             <table class="modal-table">
-                <thead><tr><th>Spieler</th><th>3-Dart Avg</th></tr></thead>
+                <thead><tr><th>Spieler / Paar</th><th>3-Dart Avg</th></tr></thead>
                 <tbody>
                     <tr><td class="p-name">${m.spieler}</td><td style="color:#f59e0b; font-weight:bold;">${m.avg || '—'}</td></tr>
                 </tbody>
@@ -855,31 +899,9 @@
                 <tbody>${legsHtml}</tbody>
             </table>
 
-            <div class="modal-section-title">Scoring</div>
-            <table class="modal-table">
-                <thead>
-                    <tr class="scoring-header-row">
-                        <th style="text-align:left; width: 35%;"></th>
-                        <th>60+</th>
-                        <th>80+</th>
-                        <th>100+</th>
-                        <th>140+</th>
-                        <th>180</th>
-                    </tr>
-                </thead>
-                <tbody class="scoring-table-body">
-                    <tr>
-                        <td class="p-name">${m.spieler}</td>
-                        <td>${m.scoring ? m.scoring.s60 : '0'}</td>
-                        <td>${m.scoring ? m.scoring.s80 : '0'}</td>
-                        <td>${m.scoring ? m.scoring.s100 : '0'}</td>
-                        <td>${m.scoring ? m.scoring.s140 : '0'}</td>
-                        <td>${m.scoring ? m.scoring.s180 : '0'}</td>
-                    </tr>
-                </tbody>
-            </table>
+            ${scoringSection}
 
-            <div class="modal-section-title">Highlights Match</div>
+            <div class="modal-section-title">${isDoppel ? 'Highlights Doppel-Match' : 'Highlights Match'}</div>
             <div style="font-size:13px; background:#0f172a; padding:10px; border-radius:6px; border: 1px solid #334155;">
                 🎯 <b>180er:</b> ${display180}<br>
                 🔥 <b>High Finish:</b> ${m.hfString || '—'}<br>
