@@ -685,7 +685,7 @@
             if (st.nummer === 1) {
                 cardHtml += `
                     <div style="padding: 15px; text-align: center; background: #162032; border-top: 1px solid #334155;">
-                        <img src="https://lhusylpjnujlqomougmg.supabase.co/storage/v1/object/public/Bilder/1.%20Spiel%201.Mannschaft.jpeg" alt="1. Spiel 1. Mannschaft TV Kapellen" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #334155;">
+                        <img src="https://raw.githubusercontent.com/Zechenhauer/TV-Kapellen-1/main/1.%20Spiel%201.Mannschaft.png" alt="1. Spiel 1. Mannschaft TV Kapellen" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #334155;">
                     </div>`;
             }
 
@@ -693,7 +693,7 @@
             if (st.nummer === 2) {
                 cardHtml += `
                     <div style="padding: 15px; text-align: center; background: #162032; border-top: 1px solid #334155;">
-                        <img src="https://lhusylpjnujlqomougmg.supabase.co/storage/v1/object/public/Bilder/1te_zweites_spiel.png" alt="2. Spiel 1. Mannschaft TV Kapellen" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #334155;">
+                        <img src="https://raw.githubusercontent.com/Zechenhauer/TV-Kapellen-1/main/1.te2tesspiel.png" alt="2. Spiel 1. Mannschaft TV Kapellen" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #334155;">
                     </div>`;
             }
 
@@ -701,7 +701,7 @@
             if (st.nummer === 3) {
                 cardHtml += `
                     <div style="padding: 15px; text-align: center; background: #162032; border-top: 1px solid #334155;">
-                        <img src="https://lhusylpjnujlqomougmg.supabase.co/storage/v1/object/public/Bilder/1te%20-%20kempen.jpeg" alt="2. Spiel 1. Mannschaft TV Kapellen" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #334155;">
+                        <img src="https://raw.githubusercontent.com/Zechenhauer/TV-Kapellen-1/main/1te%20-%202.tes%20spiel%20kempen.png" alt="2. Spiel 1. Mannschaft TV Kapellen" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #334155;">
                     </div>`;
             }
 
@@ -709,10 +709,17 @@
             if (st.nummer === 4) {
                 cardHtml += `
                     <div style="padding: 15px; text-align: center; background: #162032; border-top: 1px solid #334155;">
-                        <img src="https://lhusylpjnujlqomougmg.supabase.co/storage/v1/object/public/dart%20bilder/1.mannschaft%204.%20spieltag.jpeg" alt="2. Spiel 1. Mannschaft TV Kapellen" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #334155;">
+                        <img src="https://raw.githubusercontent.com/Zechenhauer/TV-Kapellen-1/main/1.mannschaft%204.%20spieltag.png" alt="2. Spiel 1. Mannschaft TV Kapellen" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #334155;">
                     </div>`;
             }
-
+            // Bild beim 5. Spieltag ganz unten einfügen
+            if (st.nummer === 5) {
+                cardHtml += `
+                    <div style="padding: 15px; text-align: center; background: #162032; border-top: 1px solid #334155;">
+                        <img src="https://raw.githubusercontent.com/Zechenhauer/TV-Kapellen-1/main/1te5tesspiel.png" alt="2. Spiel 1. Mannschaft TV Kapellen" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #334155;">
+                    </div>`;
+            }
+            
             cardHtml += `</div>`;
             container.innerHTML += cardHtml;
         });
